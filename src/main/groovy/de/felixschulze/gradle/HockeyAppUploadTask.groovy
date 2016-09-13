@@ -265,7 +265,7 @@ class HockeyAppUploadTask extends DefaultTask {
 
     private File createResponseOutputFile() {
 
-        File outputDir = project.file("${project.buildDir}/outputs/hockeyapp/${variant.name}")
+        File outputDir = project.file("${project.buildDir}/outputs/hockeyapp/${variantName}")
         if (!outputDir.exists()) {
             outputDir.mkdirs()
         }
