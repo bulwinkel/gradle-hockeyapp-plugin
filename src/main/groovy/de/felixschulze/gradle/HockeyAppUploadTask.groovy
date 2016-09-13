@@ -243,6 +243,10 @@ class HockeyAppUploadTask extends DefaultTask {
                     logger.info("Upload information: Title: '" + uploadResponse.title?.toString() + "' Config url: '" + uploadResponse.config_url?.toString()) + "'";
                     logger.debug("Upload response: " + uploadResponse.toString())
                     logger.lifecycle("Application public url " + uploadResponse.public_url?.toString())
+
+                    File outputFile = createResponseOutputFile()
+                    outputFile.write(responseAsString(uploadResponse))
+                    logger.lifecycle("Upload response written to " + outputFile.absolutePath)
                 }
             }
             if (hockeyApp.teamCityLog) {
@@ -250,6 +254,23 @@ class HockeyAppUploadTask extends DefaultTask {
             }
             progressLogger.completed()
         }
+    }
+
+    static String responseAsString(HttpResponse response) {
+        InputStreamReader reader = new InputStreamReader(response.getEntity().content)
+        String json = reader.text
+        reader.close()
+        return json
+    }
+
+    private File createResponseOutputFile() {
+
+        File outputDir = project.file("${project.buildDir}/outputs/hockeyapp/${variant.name}")
+        if (!outputDir.exists()) {
+            outputDir.mkdirs()
+        }
+
+        return new File(outputDir, "response.json")
     }
 
     private void parseResponseAndThrowError(HttpResponse response) {
